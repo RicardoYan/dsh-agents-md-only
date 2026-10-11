@@ -1,0 +1,5 @@
+# Bundle layer contributed by dsh-agents-md-only.
+# Inserts one Host-only plugin row; no config is required.
+- insert:
+    - id: dsh-agents-md-only
+      name: 'dsh-agents-md-only'
