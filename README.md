@@ -7,7 +7,7 @@ DSH 默认四个都读。Web / 桌面版的内置预设各自带一份指令加�
 ## 安装
 
 ```sh
-dsh plugin --profile desktop add github:RicardoYan/dsh-agents-md-only#v0.1.1
+dsh plugin --profile desktop add github:RicardoYan/dsh-agents-md-only#v0.1.2
 ```
 
 Web 端把 `desktop` 换成你的 profile 名（一般是 `web`）。装完重启 DSH。

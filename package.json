@@ -1,6 +1,6 @@
 {
   "name": "dsh-agents-md-only",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Make DSH read only AGENTS.md / AGENTS.local.md, not CLAUDE.md · 让 DSH 只读 AGENTS.md / AGENTS.local.md，不读 CLAUDE.md",
   "type": "module",
@@ -30,7 +30,16 @@
     "dsh": ">=0.2.1-rc.1 <0.3.0-0"
   },
   "scripts": {
-    "test": "node test/selftest.mjs"
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "npm run build && node test/selftest.mjs"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/cordis-plugin-loader": "~1.0.6",
+    "@deepseek-ai/dsh-agent-instructions": "0.2.1-rc.2",
+    "@types/node": "^26.2.0",
+    "typescript": "^6.0.3"
   },
   "dsh": {
     "bundle": {
