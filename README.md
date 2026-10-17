@@ -7,7 +7,7 @@ DSH 默认四个都读。Web / 桌面版的内置预设各自带一份指令加�
 ## 安装
 
 ```sh
-dsh plugin --profile desktop add github:RicardoYan/dsh-agents-md-only#v0.1.0
+dsh plugin --profile desktop add github:RicardoYan/dsh-agents-md-only#v0.1.1
 ```
 
 Web 端把 `desktop` 换成你的 profile 名（一般是 `web`）。装完重启 DSH。
@@ -19,7 +19,7 @@ Web 端把 `desktop` 换成你的 profile 名（一般是 `web`）。装完重�
 - 对所有预设和会话（含子代理）生效，不需要配置
 - 文件名不区分大小写；`~/.dsh/AGENTS.md` 照常读取
 - 装上或卸下后，已有会话继续时会收到一份更新后的完整指令（只一次）
-- 依赖 DSH 内部接口（`dsh-agent-instructions` 的配置字段），适用于 `@deepseek-ai/dsh` `>=0.2.0-rc.2 <0.3.0-0`
+- 依赖 DSH 内部接口（`dsh-agent-instructions` 的配置字段），适用于 `@deepseek-ai/dsh` `>=0.2.1-rc.1 <0.3.0-0`
 
 ## 许可证
 

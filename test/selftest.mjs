@@ -105,11 +105,9 @@ const ONLY = [['AGENTS.md'], ['AGENTS.local.md']];
   check('cordis: restored on uninstall', lists(fiberOf().config), [['AGENTS.md', 'CLAUDE.md'], ['AGENTS.local.md', 'CLAUDE.local.md']]);
   check('cordis: other hook still applies', fiberOf().config.projectRootMarkers, ['.dsh/settings.yml', '.git']);
 
-  // enabled: false leaves everything alone.
-  const off = root.plugin(plugin, { enabled: false });
-  await tick(); await tick();
-  check('cordis: disabled by config', lists(fiberOf().config), [['AGENTS.md', 'CLAUDE.md'], ['AGENTS.local.md', 'CLAUDE.local.md']]);
-  await off.dispose();
+  // Disabling belongs to the plugin manager (it writes `disabled` into the
+  // profile patch, so the loader never instantiates the plugin), not to config.
+  check('apply: takes no config parameter', plugin.apply.length, 1);
 }
 
 if (failures.length) {

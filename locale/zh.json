@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "只读 AGENTS.md (dsh-agents-md-only)",
+    "description": "只把 AGENTS.md 和 AGENTS.local.md 当作工作区指令，不读 CLAUDE.md。"
+  }
+}

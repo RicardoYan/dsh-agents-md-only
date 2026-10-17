@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "AGENTS.md only (dsh-agents-md-only)",
+    "description": "Read AGENTS.md and AGENTS.local.md as workspace instructions, and never pick up CLAUDE.md."
+  }
+}
