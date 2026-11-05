@@ -35,7 +35,11 @@ function check(label, actual, expected) {
   else failures.push(`${label}\n    expected ${JSON.stringify(expected)}\n    actual   ${JSON.stringify(actual)}`);
 }
 const tick = () => new Promise((r) => setTimeout(r, 10));
-const lists = (c) => [c.instructionFileCandidates, c.localInstructionFileCandidates];
+// Cordis 4.1 kept the resolved config in `fiber.effectiveConfig`; 4.0 exposed it
+// as `fiber.config` and used it for the RAW input instead. Read whichever field
+// actually holds the resolved object so this fixture works on either line.
+const resolvedConfig = (fiber) => fiber?.effectiveConfig ?? fiber?.config;
+const lists = (c) => [c?.instructionFileCandidates, c?.localInstructionFileCandidates];
 const ONLY = [['AGENTS.md'], ['AGENTS.local.md']];
 
 // ---------------------------------------------------------------- rewriteConfig
@@ -72,27 +76,34 @@ const ONLY = [['AGENTS.md'], ['AGENTS.local.md']];
   const fiberOf = () => [...root.registry.get(instructions.apply).fibers][0];
   root.plugin({ name: 'agent-instructions', apply: instructions.apply, Config: instructions.Config }, { maxBytes: 65536 });
   await tick();
-  check('cordis: before install', lists(fiberOf().config), [['AGENTS.md', 'CLAUDE.md'], ['AGENTS.local.md', 'CLAUDE.local.md']]);
+  check('cordis: before install', lists(resolvedConfig(fiberOf())), [['AGENTS.md', 'CLAUDE.md'], ['AGENTS.local.md', 'CLAUDE.local.md']]);
 
   // Other plugins hooking the same config (dsh-project-config inserts a root marker).
-  root.on('internal/config', function (raw, next) {
+  // Cordis 4.1 hands the fiber as the first payload argument; 4.0 bound it as
+  // `this` and passed the raw config first. Resolve both shapes the same way the
+  // plugin does, so this fixture cannot silently stop exercising the hook.
+  root.on('internal/config', function (first, second) {
+    const fiberAsArgument =
+      first !== null && typeof first === 'object' && typeof first.ctx === 'object' && 'uid' in first;
+    const fiber = fiberAsArgument ? first : this;
+    const next = fiberAsArgument ? second : first;
     const out = next();
-    if (this?.runtime?.callback !== instructions.apply) return out;
+    if (fiber?.runtime?.callback !== instructions.apply) return out;
     return { ...out, projectRootMarkers: ['.dsh/settings.yml', ...(out.projectRootMarkers ?? ['.git'])] };
   }, { global: true });
 
   const fiber = root.plugin(plugin, {});
   await tick();
-  check('cordis: restarted on install', lists(fiberOf().config), ONLY);
-  check('cordis: coexists with other hook', fiberOf().config.projectRootMarkers, ['.dsh/settings.yml', '.git']);
-  check('cordis: maxBytes kept', fiberOf().config.maxBytes, 65536);
+  check('cordis: restarted on install', lists(resolvedConfig(fiberOf())), ONLY);
+  check('cordis: coexists with other hook', resolvedConfig(fiberOf()).projectRootMarkers, ['.dsh/settings.yml', '.git']);
+  check('cordis: maxBytes kept', resolvedConfig(fiberOf()).maxBytes, 65536);
   check('cordis: one instance', root.registry.get(instructions.apply).fibers.length, 1);
 
   // Instances mounted later are rewritten too.
   root.plugin({ name: 'agent-instructions', apply: instructions.apply, Config: instructions.Config }, { maxBytes: 1024 });
   await tick();
   const later = [...root.registry.get(instructions.apply).fibers][1];
-  check('cordis: later instance', lists(later.config), ONLY);
+  check('cordis: later instance', lists(resolvedConfig(later)), ONLY);
 
   // Other plugins' config untouched.
   let seen;
@@ -102,8 +113,8 @@ const ONLY = [['AGENTS.md'], ['AGENTS.local.md']];
 
   await fiber.dispose();
   await tick(); await tick();
-  check('cordis: restored on uninstall', lists(fiberOf().config), [['AGENTS.md', 'CLAUDE.md'], ['AGENTS.local.md', 'CLAUDE.local.md']]);
-  check('cordis: other hook still applies', fiberOf().config.projectRootMarkers, ['.dsh/settings.yml', '.git']);
+  check('cordis: restored on uninstall', lists(resolvedConfig(fiberOf())), [['AGENTS.md', 'CLAUDE.md'], ['AGENTS.local.md', 'CLAUDE.local.md']]);
+  check('cordis: other hook still applies', resolvedConfig(fiberOf()).projectRootMarkers, ['.dsh/settings.yml', '.git']);
 
   // Disabling belongs to the plugin manager (it writes `disabled` into the
   // profile patch, so the loader never instantiates the plugin), not to config.

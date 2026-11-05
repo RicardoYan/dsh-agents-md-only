@@ -9,9 +9,11 @@
  *   own instance with only `maxBytes`, and a profile patch cannot address rows
  *   inside a preset, so the change is made at config resolution instead.
  * - cordis: the global `internal/config` waterfall runs whenever a fiber resolves
- *   its config (`this` is the fiber, `this.runtime.callback` the plugin's apply);
- *   `ctx.registry.get(apply).fibers` lists the running instances and
- *   `fiber.restart()` re-resolves the config.
+ *   its config; `ctx.registry.get(apply).fibers` lists the running instances and
+ *   `fiber.restart()` re-resolves the config. Cordis 4.1 (DSH 0.2.2) hands the
+ *   fiber as the FIRST payload argument (`(fiber, next)`), while 4.0 handed it
+ *   as `this` and passed the raw config first. Both are handled below so the
+ *   plugin keeps working on either line.
  * - agent-instructions keys its baseline on the candidate lists, so a session that
  *   continues after install / uninstall receives one replacement baseline.
  */
@@ -70,9 +72,23 @@ export function apply(ctx: Context): void {
   let active = true
   ctx.on(
     'internal/config',
-    function (this: Fiber, raw: unknown, next: () => any) {
+    function (this: Fiber, first: unknown, second?: unknown) {
+      // Cordis 4.0 (DSH <=0.2.1): payload `(rawConfig, next)`, the fiber is `this`.
+      // Cordis 4.1 (DSH >=0.2.2): payload `(fiber, next)`, `this` is not the fiber.
+      // A fiber is an object carrying `ctx` plus a `runtime`/`uid` pair; a raw
+      // config object never has `ctx`. Arg 2 being the `next` callback in both
+      // shapes means the payload arity alone cannot distinguish them.
+      const looksLikeFiber =
+        first !== null &&
+        typeof first === 'object' &&
+        typeof (first as { ctx?: unknown }).ctx === 'object' &&
+        (first as { ctx?: unknown }).ctx !== null &&
+        'uid' in (first as object)
+      const fiber = looksLikeFiber ? (first as Fiber) : this
+      const next = (looksLikeFiber ? second : first) as (() => any) | undefined
+      if (typeof next !== 'function') return first
       const out = next()
-      if (!active || this?.runtime?.callback !== instructionsApply) return out
+      if (!active || fiber?.runtime?.callback !== instructionsApply) return out
       return rewriteConfig(out)
     },
     { global: true },
