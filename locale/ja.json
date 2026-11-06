@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "AGENTS.md のみ (dsh-agents-md-only)",
+    "description": "AGENTS.md と AGENTS.local.md をワークスペースの指示として読み込み、CLAUDE.md は決して読み込みません。"
+  }
+}

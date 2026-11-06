@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Nur AGENTS.md (dsh-agents-md-only)",
+    "description": "Liest AGENTS.md und AGENTS.local.md als Arbeitsbereichsanweisungen und greift niemals auf CLAUDE.md zurück."
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Только AGENTS.md (dsh-agents-md-only)",
+    "description": "Читает AGENTS.md и AGENTS.local.md как инструкции рабочей области и никогда не подхватывает CLAUDE.md."
+  }
+}

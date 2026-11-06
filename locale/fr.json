@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "AGENTS.md uniquement (dsh-agents-md-only)",
+    "description": "Lit AGENTS.md et AGENTS.local.md comme instructions d'espace de travail et ne récupère jamais CLAUDE.md."
+  }
+}
