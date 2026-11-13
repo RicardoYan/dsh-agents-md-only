@@ -1,6 +1,6 @@
 {
   "name": "dsh-agents-md-only",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Make DSH read only AGENTS.md / AGENTS.local.md, not CLAUDE.md · 让 DSH 只读 AGENTS.md / AGENTS.local.md，不读 CLAUDE.md",
   "type": "module",
@@ -27,7 +27,7 @@
   "license": "MIT",
   "engines": {
     "node": "^22.19.0 || >=24.0.0",
-    "dsh": ">=0.2.2-rc.2 <0.3.0-0"
+    "dsh": ">=0.2.2-rc.3 <0.3.0-0"
   },
   "scripts": {
     "build": "node scripts/build.mjs",
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@deepseek-ai/cordis": "4.1.0",
     "@deepseek-ai/cordis-plugin-loader": "~1.1.0",
-    "@deepseek-ai/dsh-agent-instructions": "0.2.2-rc.2",
+    "@deepseek-ai/dsh-agent-instructions": "0.2.2-rc.3",
     "@types/node": "^26.2.0",
     "typescript": "^6.0.3"
   },
@@ -47,8 +47,8 @@
     }
   },
   "peerDependencies": {
-    "@deepseek-ai/dsh": ">=0.2.2-rc.2 <0.3.0-0",
-    "@deepseek-ai/dsh-agent-instructions": ">=0.2.2-rc.2 <0.3.0-0"
+    "@deepseek-ai/dsh": ">=0.2.2-rc.3 <0.3.0-0",
+    "@deepseek-ai/dsh-agent-instructions": ">=0.2.2-rc.3 <0.3.0-0"
   },
   "icon": "icon.svg"
 }
